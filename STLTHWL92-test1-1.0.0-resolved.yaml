@@ -1,0 +1,153 @@
+---
+openapi: 3.0.0
+info:
+  title: Объекты капитального строительства OpenAPI спецификация
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/STLTHWL92/test1/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:8080/api/v1/
+  description: dev server
+paths:
+  /objects:
+    get:
+      tags:
+      - oks
+      summary: Метод получения списка объектов
+      operationId: getAllObjects
+      responses:
+        "200":
+          description: Успешный ответ со списком объектов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Objects'
+        default:
+          description: все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+      - oks
+      summary: Метод по созданию объекта
+      operationId: createObject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Object'
+        required: true
+      responses:
+        "200":
+          description: Успешный ответ с созданным объектом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        default:
+          description: все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /objects/{object_id}:
+    get:
+      tags:
+      - oks
+      summary: Метод получения объетка по идентификатору
+      operationId: getObjectById
+      parameters:
+      - name: object_id
+        in: path
+        description: Идентификатор объекта
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 6B29FC40-CA47-1067-B31D-00DD010662DA
+      responses:
+        "200":
+          description: Успешный ответ с одним объектом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        default:
+          description: все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - oks
+      summary: Метод по удалению объекта по идентификатору
+      operationId: deleteObjectById
+      parameters:
+      - name: object_id
+        in: path
+        description: Идентификатор объекта
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 6B29FC40-CA47-1067-B31D-00DD010662DA
+      responses:
+        "200":
+          description: Успешный ответ с удаленным объектом
+          content:
+            application/json: {}
+        default:
+          description: все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Object:
+      required:
+      - name
+      - status
+      type: object
+      properties:
+        object_id:
+          type: string
+          example: 6B29FC40-CA47-1067-B31D-00DD010662DA
+        name:
+          type: string
+          example: Очистные сооружения
+        status:
+          type: string
+          description: статус объекта
+          enum:
+          - строительство
+          - консервация
+          - передача на баланс
+        created_at:
+          type: string
+          format: 2023-01-01T15:00:00+01
+    Objects:
+      type: array
+      items:
+        $ref: '#/components/schemas/Object'
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          enum:
+          - 404
+          - 401
+          - 403
+          - 500
+        message:
+          type: string
+          example: "Ошибка, объекты не были загружены"
